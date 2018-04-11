@@ -95,9 +95,11 @@ class turtlebot_move():
 if __name__ == '__main__':
     try:
         ins = turtlebot_move()
-        ins.moveForward()
-        ins.turnRight()
-        ins.moveForward()
+        i = 0
+        while i < 4:
+            ins.moveForward()
+            ins.turnRight()
+            i = i + 1
         rospy.loginfo("Finished Moving 5x5")
     except rospy.ROSInterruptException or KeyboardInterrupt:
         rospy.loginfo("Action terminated.")
