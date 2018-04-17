@@ -11,7 +11,8 @@ DET_MIN = 0.95
 def RotInv(R):
     try:
         if np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN:
-            invR = [[R[0][0],R[1][0],R[2][0]],[R[0][1],R[1][1],R[2][1]],[R[0][2],R[1][2],R[2][2]]]
+            invR = np.linalg.inv(R)
+            # invR = [[R[0][0],R[1][0],R[2][0]],[R[0][1],R[1][1],R[2][1]],[R[0][2],R[1][2],R[2][2]]]
             return invR
         else:
             print("The determinant of the input matrice is not equal to 1!")
@@ -71,8 +72,8 @@ def MatrixExp3(so3mat):
 # Computes the matrix logarithm so3mat in so(3) of the rotation matrix R in SO(3)
 def MatrixLog3(R):
     try:
-        if np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN and np.shape(R) == (3,3):
-            pass
+        if np.shape(R) == (3,3) and np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN and np.shape(R) == (3,3):
+            Rtrace = np.matrix.trace(R)
 
         else:
             print("Illegal input!")
