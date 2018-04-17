@@ -4,12 +4,13 @@ from math import cos, acos, sin, tan, pi, sqrt
 import matplotlib.pyplot as plt
 import random
 
-DETERMINANT = 1.0000000000
+DET_MAX = 1.05
+DET_MIN = 0.95
 
 # Computes the inverse of the rotation matrix R.
 def RotInv(R):
     try:
-        if det(R) == DETERMINANT:
+        if np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN:
             invR = [[R[0][0],R[1][0],R[2][0]],[R[0][1],R[1][1],R[2][1]],[R[0][2],R[1][2],R[2][2]]]
             return invR
         else:
@@ -70,7 +71,7 @@ def MatrixExp3(so3mat):
 # Computes the matrix logarithm so3mat in so(3) of the rotation matrix R in SO(3)
 def MatrixLog3(R):
     try:
-        if det(R) == DETERMINANT and np.shape(R) == (3,3):
+        if np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN and np.shape(R) == (3,3):
             pass
 
         else:
@@ -81,7 +82,7 @@ def MatrixLog3(R):
 # Builds the homogeneous transformation matrix T corresponding to a rotation matrix R in SO(3) and a position vector p in R^3
 def RpToTrans(R, p):
     try:
-        if len(p) == 3 and np.shape(R) == (3,3) and det(R) == 1:
+        if len(p) == 3 and np.shape(R) == (3,3) and np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN:
             T = [[R[0][0],R[0][1],R[0][2],p[0]] , [R[1][0],R[1][1],R[1][2],p[1]], [R[2][0],R[2][1],R[2][2],p[2]] , [0,0,0,1]]
             return T
         else:
@@ -93,9 +94,9 @@ def RpToTrans(R, p):
 def TransToRp(T):
     try:
         if np.shape(T) == (4,4):
-            R = [[T[0][0],T[0][1],T[0][2]], [T[1][0],T[1][1],T[1][2]], [T[2][0],T[2][1],T[2][2]]
+            R = [[T[0][0],T[0][1],T[0][2]], [T[1][0],T[1][1],T[1][2]], [T[2][0],T[2][1],T[2][2]]]
             p = [T[0][3],T[1][3],T[2][3]]
-            if det(R) == DETERMINANT:
+            if np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN:
                 return (R, p)
         else:
             print("Illegal input!")
@@ -112,7 +113,7 @@ def TransInv(T):
             invT = [[invR[0][0],invR[0][1],invR[0][2],pt[0]],
                     [invR[1][0],invR[1][1],invR[2][2],pt[1]],
                     [invR[2][0],invR[2][1],invR[2][2],pt[2]],
-                    [0 0 0 1]]
+                    [0,0,0,1]]
             return invT
         else:
             print("Illegal input!")
@@ -150,7 +151,7 @@ def Adjoint(T):
     try:
         if np.shape(T) == (4,4):
             [R, p] = TransToRp(T)
-            if det(R) == DETERMINANT:
+            if np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN:
                 pass
             pso = VecToso3(p)
             Rt = np.matmul(pso, R)
