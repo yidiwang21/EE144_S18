@@ -30,7 +30,7 @@ def VecToso3(omg):
 # Returns the 3-vector corresponding to the 3×3 skew-symmetric matrix so3mat.
 def so3ToVec(so3mat):
     try:
-        if !so3mat[0][0] and !so3mat[1][1] and !so3mat[2][2]:
+        if so3mat[0][0] == 0 and so3mat[1][1] == 0 and so3mat[2][2] == 0:
             pass
         if so3mat[0][1] == -so3mat[1][0] and so3mat[0][2] == -so3mat[2][0] and so3mat[1][2] == -so3mat[2][1]:
             omg = [so3mat[2][1],so3mat[0][2],so3mat[1][0]]
