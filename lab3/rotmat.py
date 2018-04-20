@@ -15,7 +15,9 @@ def MatDiag(A):
 def RotDecide(R):
     try:
         if np.linalg.det(R) <= DET_MAX and np.linalg.det(R) >= DET_MIN:
-            if np.matrix.trace(MatDiag(np.linalg.inv(R))) - np.matrix.trace(MatDiag(mr.RotInv(R))) <= epsilon:
+            # FIXME: whether need to be diagalised
+            # if np.matrix.trace(MatDiag(np.linalg.inv(R))) - np.matrix.trace(MatDiag(mr.RotInv(R))) <= epsilon:
+            if np.matrix.trace(np.linalg.inv(R)) - np.matrix.trace(mr.RotInv(R)) <= epsilon:
                 return True
         else:
             return False
