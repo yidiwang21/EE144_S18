@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import rotmat
+import exercise343 as rotmat
 import modern_robotics as mr
 import numpy as np
 from math import cos, acos, sin, tan, pi, sqrt

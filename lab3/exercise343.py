@@ -24,6 +24,7 @@ def RotDecide(R):
     except:
         print("Failed to calculate!")
 
+# just for test
 R = np.array([[0.8378, 0.0940, 0.5378],
             [0.0071, 0.9831, -0.1830],
             [-0.5459, 0.1572, 0.8230]])

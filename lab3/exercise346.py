@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import rotmat
 import exercise345 as ex
 import modern_robotics as mr
 import numpy as np
