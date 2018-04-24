@@ -2,6 +2,7 @@
 import modern_robotics as mr
 import numpy as np
 from math import cos, acos, sin, tan, pi, sqrt
+import matplotlib.pyplot as plt
 
 PI = 3.1415926535897
 
@@ -15,12 +16,21 @@ T = np.array([[1,0,0,2],
             [0,0,1,0],
             [0,0,0,1]])
 
+angle = [theta/4, theta/2, theta*3/4, theta]
 S = mr.ScrewToAxis(q,s,h)
-print S
-S1, theta1 = mr.AxisAng6(S)
-print S1, theta1
-# FIXME: how to use theta???   
-se3mat = mr.VecTose3(S1)
-Travel = mr.MatrixExp6(se3mat)
-T1 = np.matmul(Travel,T)
-print T1
+
+def computeConfig(S, angle):
+    Sn = S * angle
+    T0n = mr.VecTose3(Sn)
+    Tn = np.matmul(mr.MatrixExp6(T0n),T)
+    return Tn
+
+if __name__ == '__main__':
+    try:
+        i = 0
+        while i < 4:            # iter 4 times to calculate intermedian configurations
+            Tn = computeConfig(S,angle[i])
+            print 'Tn[', i, '] = ', '\n', Tn
+            i = i + 1
+    except KeyboardInterrupt:
+        exit()
