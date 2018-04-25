@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 PI = 3.1415926535897
 RAD = 2 * PI / 360
 PHI = 0
-kp = 18     # set an estimated proper kp value
-kd = 100    # FIXME: this need to be adjust
+kp = 15     # FIXME: this need to be adjust
+kd = 1000   # FIXME: this need to be adjust
 
 x = np.array([0])
 y = np.array([0])
@@ -51,9 +51,10 @@ class turtlebot_move():
         vel.angular.y = 0
         vel.angular.z = 0
 
+        # TODO: use the position change to do the feedback
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
-        # FIXME: to use a const phi value
+        # FIXME: try to use a const phi value
         init_orientation = orientation[2]
         temp_orientation = init_orientation
         print 'init_orientation = ', init_orientation
@@ -77,8 +78,9 @@ class turtlebot_move():
                 # get the orientation difference and derivative difference of z-axis
                 det_phi = init_orientation - orientation[2]
                 d_phi = temp_orientation - orientation[2]
+                print d_phi
                 temp_orientation = orientation[2]
-                # p controller of angular speed of z-axis
+                # p and d controller for reset angular speed of z-axis each loop
                 vel.angular.z = (kp * det_phi + kd * d_phi) * RAD
                 self.set_velocity.publish(vel)
                 rate.sleep()
@@ -129,7 +131,7 @@ if __name__ == '__main__':
     try:
         ins = turtlebot_move()
         i = 0
-        while i < 4:            # iter multiple times just for test and plotting
+        while i < 4:            # iter 4 times to complete a square
             ins.moveForward()
             ins.turnRight()
             i = i + 1
