@@ -10,8 +10,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 PI = 3.1415926535897
+RAD = 2 * PI / 360
 PHI = 0
 kp = 18     # set an estimated proper kp value
+kd = 100    # FIXME: this need to be adjust
+
 x = np.array([0])
 y = np.array([0])
 
@@ -26,7 +29,7 @@ class turtlebot_move():
         rospy.loginfo("Press CTRL + C to terminate")
         rospy.on_shutdown(self.shutdown)
 
-        self.set_velocity = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
+        self.set_velocity = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size = 10)
         # reset odometry
         reset_odom = rospy.Publisher('mobile_base/commands/reset_odometry', Empty, queue_size = 10)
         # this message take a few iterations to get through
@@ -52,6 +55,7 @@ class turtlebot_move():
         orientation = tf.transformations.euler_from_quaternion(quaternion)
         # FIXME: to use a const phi value
         init_orientation = orientation[2]
+        temp_orientation = init_orientation
         print 'init_orientation = ', init_orientation
 
         rate = rospy.Rate(10)
@@ -70,10 +74,12 @@ class turtlebot_move():
                     x = np.append(x, position[0])
                     y = np.append(y, position[1])
                 cnt = cnt + 1
-                # get the orientation difference of z-axis
+                # get the orientation difference and derivative difference of z-axis
                 det_phi = init_orientation - orientation[2]
+                d_phi = temp_orientation - orientation[2]
+                temp_orientation = orientation[2]
                 # p controller of angular speed of z-axis
-                vel.angular.z = kp * det_phi * 2 * PI/360
+                vel.angular.z = (kp * det_phi + kd * d_phi) * RAD
                 self.set_velocity.publish(vel)
                 rate.sleep()
                 t1 = rospy.Time.now().to_sec()
@@ -84,8 +90,8 @@ class turtlebot_move():
     def turnRight(self):
         rospy.loginfo("Start turning right...")
 
-        angular_speed = 10*2*PI/360             # pick a proper angular speed
-        relative_angle = 90*2*PI/360            # set target turning angle to 90 degrees
+        angular_speed = 10 * RAD             # pick a proper angular speed
+        relative_angle = 90 * RAD            # set target turning angle to 90 degrees
 
         vel = Twist()
         vel.linear.x = 0
@@ -97,7 +103,7 @@ class turtlebot_move():
 
         rate = rospy.Rate(10)
         current_angle = 0
-        print("current_angle = ", current_angle*180/PI)
+        print("current_angle = ", current_angle / RAD)
         while not rospy.is_shutdown():
             t0 = rospy.Time.now().to_sec()
             cnt = 0
