@@ -11,6 +11,8 @@ PI = 3.1415926535897
 PHI = 0
 kp = 0.2
 
+tfListener = tf.TransformListener()
+
 class turtlebot_move():
     def __init__(self):
         # reset the position of the robot to the center of the world for easier observaton
@@ -33,7 +35,7 @@ class turtlebot_move():
         while time() - timer < 1.0:
             reset_odom.publish(Empty())
         # Initialize the tf listener
-        tfListener = tf.TransformListener()
+        
         rospy.loginfo("Finished Initializing!")
 
     def moveForward(self):
@@ -61,12 +63,14 @@ class turtlebot_move():
                 orientation = tf.transformations.euler_from_quaternion(quaternion)
                 rospy.loginfo("position: "+str(position))
                 rospy.loginfo("orientation: "+str(orientation))
+                det_phi = abs(orientation[2])
                 self.set_velocity.publish(vel)
                 rate.sleep()
                 t1 = rospy.Time.now().to_sec()
-                if cnt % 10 == 0:
-                    print("Current time:", t1)  # print current time every 10 loops
+                # if cnt % 10 == 0:
+                #     print("Current time:", t1)  # print current time every 10 loops
                 cnt = cnt + 1
+                vel.angular.z = 10*det_phi*2*PI/360 
             break                               # after 10 secs, end moving forward
 
         rospy.sleep(1)
