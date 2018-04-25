@@ -5,6 +5,7 @@ from std_srvs.srv import Empty
 
 PI = 3.1415926535897
 PHI = 0
+kp = 0.2
 
 class turtlebot_move():
     def __init__(self):
@@ -25,7 +26,7 @@ class turtlebot_move():
         reset_odom = rospy.Publisher('mobile_base/commands/reset_odometry', Empty, queue_size = 10)
         # this message take a few iterations to get through
         timer = time()
-        while time() - timer<1.0:
+        while time() - timer < 1.0:
             reset_odom.publish(Empty())
         # Initialize the tf listener
         tfListener = tf.TransformListener()
@@ -33,6 +34,9 @@ class turtlebot_move():
 
     def moveForward(self):
         rospy.loginfo("Start moving forward...")
+
+        # angular_speed = 10*2*PI/360             # pick a proper angular speed
+        # relative_angle = 90*2*PI/360            # set target turning angle to 90 degrees
 
         vel = Twist()
         vel.linear.x = 0.5
@@ -49,6 +53,10 @@ class turtlebot_move():
             cnt = 0
             print("Current time:", t1)
             while t1 < t.to_sec():
+                (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
+                orientation = tf.transformations.euler_from_quaternion(quaternion)
+                rospy.loginfo("position: "+str(position))
+                rospy.loginfo("orientation: "+str(orientation))
                 self.set_velocity.publish(vel)
                 rate.sleep()
                 t1 = rospy.Time.now().to_sec()
@@ -90,6 +98,8 @@ class turtlebot_move():
             break
 
         rospy.sleep(1)
+
+
 
     def shutdown(self):
         rospy.loginfo("Stop Action")
