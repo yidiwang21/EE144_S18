@@ -9,7 +9,7 @@ import tf
 
 PI = 3.1415926535897
 PHI = 0
-kp = 0.2
+kp = 20
 
 tfListener = tf.TransformListener()
 
@@ -35,7 +35,7 @@ class turtlebot_move():
         while time() - timer < 1.0:
             reset_odom.publish(Empty())
         # Initialize the tf listener
-        
+
         rospy.loginfo("Finished Initializing!")
 
     def moveForward(self):
@@ -52,6 +52,9 @@ class turtlebot_move():
         vel.angular.y = 0
         vel.angular.z = 0
 
+        (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
+        orientation_set = tf.transformations.euler_from_quaternion(quaternion)
+
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             t1 = rospy.Time.now().to_sec()
@@ -63,14 +66,14 @@ class turtlebot_move():
                 orientation = tf.transformations.euler_from_quaternion(quaternion)
                 rospy.loginfo("position: "+str(position))
                 rospy.loginfo("orientation: "+str(orientation))
-                det_phi = abs(orientation[2])
+                det_phi = abs(orientation[2] - orientation_set[2])
                 self.set_velocity.publish(vel)
                 rate.sleep()
                 t1 = rospy.Time.now().to_sec()
                 # if cnt % 10 == 0:
                 #     print("Current time:", t1)  # print current time every 10 loops
                 cnt = cnt + 1
-                vel.angular.z = 10*det_phi*2*PI/360 
+                vel.angular.z = kp*det_phi*2*PI/360
             break                               # after 10 secs, end moving forward
 
         rospy.sleep(1)
@@ -122,7 +125,7 @@ if __name__ == '__main__':
     try:
         ins = turtlebot_move()
         i = 0
-        while i < 4:            # iter 4 times to complete a square
+        while i < 100:            # iter 4 times to complete a square
             ins.moveForward()
             ins.turnRight()
             i = i + 1
