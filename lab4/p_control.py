@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Twist
-from std_srvs.srv import Empty
+# from std_srvs.srv import Empty
 from std_msgs.msg import String, Empty
 from time import time
 import geometry_msgs.msg
@@ -15,12 +15,12 @@ class turtlebot_move():
     def __init__(self):
         # reset the position of the robot to the center of the world for easier observaton
         rospy.init_node('reset_world', anonymous=False)
-        rospy.wait_for_service('/gazebo/reset_world')
-        reset_world = rospy.ServiceProxy('/gazebo/reset_world',Empty)
-        if reset_world():
-            rospy.loginfo("World successfully reset!")
-        else:
-            rospy.loginfo("World failed to reset!")
+        # rospy.wait_for_service('/gazebo/reset_world')
+        # reset_world = rospy.ServiceProxy('/gazebo/reset_world',Empty)
+        # if reset_world():
+        #     rospy.loginfo("World successfully reset!")
+        # else:
+        #     rospy.loginfo("World failed to reset!")
 
         rospy.loginfo("Press CTRL + C to terminate")
         rospy.on_shutdown(self.shutdown)
