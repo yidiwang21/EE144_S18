@@ -78,7 +78,6 @@ class turtlebot_move():
                 # get the orientation difference and derivative difference of z-axis
                 det_phi = init_orientation - orientation[2]
                 d_phi = temp_orientation - orientation[2]
-                print d_phi
                 temp_orientation = orientation[2]
                 # p and d controller for reset angular speed of z-axis each loop
                 vel.angular.z = (kp * det_phi + kd * d_phi) * RAD

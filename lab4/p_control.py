@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 PI = 3.1415926535897
 PHI = 0
-kp = 18     # set an estimated proper kp value
+kp = 15     # set an estimated proper kp value
 x = np.array([0])
 y = np.array([0])
 
