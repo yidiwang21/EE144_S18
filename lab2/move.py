@@ -2,8 +2,16 @@
 import rospy
 from geometry_msgs.msg import Twist
 from std_srvs.srv import Empty
+from time import time
+import tf
+import numpy as np
+import matplotlib.pyplot as plt
 
 PI = 3.1415926535897
+x = np.array([0])
+y = np.array([0])
+
+tfListener = tf.TransformListener()
 
 class turtlebot_move():
     def __init__(self):
@@ -25,7 +33,13 @@ class turtlebot_move():
         rospy.loginfo("Finished Initializing!")
 
     def moveForward(self):
+        global x,y
         rospy.loginfo("Start moving forward...")
+        (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
+        orientation = tf.transformations.euler_from_quaternion(quaternion)
+        # FIXME: to use a const phi value
+        init_orientation = orientation[2]
+        print 'init_orientation = ', init_orientation
 
         vel = Twist()
         vel.linear.x = 0.5
@@ -42,6 +56,14 @@ class turtlebot_move():
             cnt = 0
             print("Current time:", t1)
             while t1 < t.to_sec():
+                (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
+                orientation = tf.transformations.euler_from_quaternion(quaternion)
+                # rospy.loginfo("position: " + str(position))
+                # rospy.loginfo("orientation: " + str(orientation))
+                if cnt % 3 == 0:    # 30 dots per side
+                    x = np.append(x, position[0])
+                    y = np.append(y, position[1])
+                cnt = cnt + 1
                 self.set_velocity.publish(vel)
                 rate.sleep()
                 t1 = rospy.Time.now().to_sec()
@@ -102,5 +124,7 @@ if __name__ == '__main__':
             ins.turnRight()
             i = i + 1
         rospy.loginfo("Finished Moving 5x5")
+        plt.scatter(x, y)
+        plt.show()
     except rospy.ROSInterruptException or KeyboardInterrupt:
         rospy.loginfo("Action terminated.")
