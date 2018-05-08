@@ -27,7 +27,7 @@ class Arm(object):
 
     def compute_end_effector(self):
 	#the return of the function is the position of end_effector, start with self.joints.theta1 and self.joints.theta2
-        ################################ Computes end_effector position knowing joint angles, your code goes between ##############################
+    ################################ Computes end_effector position knowing joint angles, your code goes between ##############################
         x = self.link1 * cos(self.joints.theta1) + self.link2 * cos(self.joints.theta1 + self.joints.theta2)
         y = self.link1 * sin(self.joints.theta1) + self.link2 * sin(self.joints.theta1 + self.joints.theta2)
 	###########################################################################################################################################
@@ -42,8 +42,6 @@ class Arm(object):
         y = input_ee[1]
         link1 = self.link1
         link2 = self.link2
-        print("x = ", x, "y = ", y)
-        print ("link1 = ", link1, "link2 = ", link2)
         w_space = sqrt(x**2 + y**2)
         if w_space < link1 - link2 or w_space > link1 + link2:
             raise ValueError('hahaha, invalid input!')
@@ -54,7 +52,7 @@ class Arm(object):
 
     def compute_joints(self):
 	#the return of the function are angles of joints, which should stay between -pi and pi. Start with self.end_effector.x and self.end_effector.y.
-        ################################# Computes joint angle knowing end effector position, your code goes below #################################
+    ################################# Computes joint angle knowing end effector position, your code goes below #################################
         x = self.end_effector.x
         y = self.end_effector.y
         link1 = self.link1
