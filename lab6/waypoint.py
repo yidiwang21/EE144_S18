@@ -30,7 +30,7 @@ next_point = waypoints[ptr]
 face_orientation = 0.0
 
 EPSILON = 0.05
-dist_thresh = 0.1   # FIXME
+dist_thresh = 0.05   # FIXME
 RAD = 2 * pi / 360
 kp = 1              # FIXME: set an estimated proper kp value
 x = np.array([0])
@@ -74,22 +74,18 @@ class turtlebot_move():
         curr_orientation = orientation[2]
         print('curr_orientation = ', orientation[2])
         if abs(curr_point[1] - next_point[1]) <= EPSILON and abs(curr_point[0] - next_point[0]) <= EPSILON: # point unchanged
-            print '000'
             target_angle = 0
         elif abs(curr_point[1] - next_point[1]) <= EPSILON:   # position at y unchanged, moving on x-axis
-            print 'yyy'
             if curr_point[0] <= next_point[0]:
                 target_angle = - curr_orientation
             else:
                 target_angle = pi - curr_orientation
         elif abs(curr_point[0] - next_point[0]) <= EPSILON:   # position at x unchanged, moving on y-axis
-            print 'xxx'
             if curr_point[1] <= next_point[1]:
                 target_angle = pi / 2 - curr_orientation
             else:
                 target_angle = 3 * pi / 2 - curr_orientation
         else:
-            print 'shit'
             target_angle = atan((next_point[0] - position[0]) / (next_point[1] - position[1])) - curr_orientation
             # print('init target_angle = ', target_angle)
             if curr_point[0] > next_point[0]:
@@ -155,7 +151,8 @@ class turtlebot_move():
             # there is no information collection for the sign of theta, so using atan2 here
             theta = atan2(next_point[0] - position[0], next_point[1] - position[1])
             vel.angular.z = kp * theta * 2 * pi/360
-            vel.linear.x = 0.1    # FIXME
+            # vel.linear.x = -abs(theta) * 0.002 + 0.1    # FIXME
+            vel.linear.x = 0.12
             self.set_velocity.publish(vel)
             rate.sleep()
             if cnt % 3 == 0:

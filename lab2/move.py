@@ -125,6 +125,7 @@ if __name__ == '__main__':
             i = i + 1
         rospy.loginfo("Finished Moving 5x5")
         plt.scatter(x, y)
+        plt.title('Original Path')
         plt.show()
     except rospy.ROSInterruptException or KeyboardInterrupt:
         rospy.loginfo("Action terminated.")
