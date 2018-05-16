@@ -17,19 +17,13 @@ class turtlebot_move():
     def __init__(self):
         # reset the position of the robot to the center of the world for easier observaton
         rospy.init_node('reset_world', anonymous=False)
-        rospy.wait_for_service('/gazebo/reset_world')
-        reset_world = rospy.ServiceProxy('/gazebo/reset_world',Empty)
-        if reset_world():
-            rospy.loginfo("World successfully reset!")
-        else:
-            rospy.loginfo("World failed to reset!")
-
         rospy.loginfo("Press CTRL + C to terminate")
         rospy.on_shutdown(self.shutdown)
-
         self.set_velocity = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
-        # rospy.loginfo("Initializing... Please reset sim time in the GUI...")
-        # rospy.sleep(5)
+        reset_odom = rospy.Publisher('mobile_base/commands/reset_odometry', Empty, queue_size = 10) # reset odometry
+        timer = time()
+        while time() - timer < 1.0:
+            reset_odom.publish(Empty())
         rospy.loginfo("Finished Initializing!")
 
     def moveForward(self):
