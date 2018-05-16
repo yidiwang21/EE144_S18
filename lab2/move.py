@@ -73,7 +73,7 @@ class turtlebot_move():
 
         angular_speed = 20*2*PI/360             # pick a proper angular speed
         # relative_angle = 90*2*PI/360            # set target turning angle to 90 degrees
-        relative_angle = 90*2*PI/360            # set target turning angle to 90 degrees
+        relative_angle = 180*2*PI/360            # set target turning angle to 90 degrees
 
 
         vel = Twist()
