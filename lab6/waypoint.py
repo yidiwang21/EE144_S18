@@ -59,7 +59,7 @@ class turtlebot_move():
         global face_orientation
 
         current_angle = 0
-        angular_speed = 40 * RAD             # pick a proper angular speed
+        angular_speed = 100 * RAD             # pick a proper angular speed
         vel = Twist()
         vel.linear.x = 0
         vel.linear.y = 0
