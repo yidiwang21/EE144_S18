@@ -32,7 +32,7 @@ face_orientation = 0.0
 EPSILON = 0.1
 dist_thresh = 0.1   # FIXME
 RAD = 2 * pi / 360
-kp = 10              # FIXME: set an estimated proper kp value
+kp = 1              # FIXME: set an estimated proper kp value
 x = np.array([0])
 y = np.array([0])
 
@@ -59,7 +59,7 @@ class turtlebot_move():
         global face_orientation
 
         current_angle = 0
-        angular_speed = 20 * RAD             # pick a proper angular speed
+        angular_speed = 10 * RAD             # pick a proper angular speed
         vel = Twist()
         vel.linear.x = 0
         vel.linear.y = 0
