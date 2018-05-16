@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue May 8, 20:47 2018
-Description: This script support any valid customized waypoints set, not only for the test case
+Description: This script is a real-test version of lab6
 
 @author: Yidi Wang
 """
@@ -29,8 +29,8 @@ curr_point = waypoints[ptr]
 next_point = waypoints[ptr]
 face_orientation = 0.0
 
-EPSILON = 0.05
-dist_thresh = 0.05   # FIXME
+EPSILON = 0.1       # FIXME
+dist_thresh = 0.1   # FIXME
 RAD = 2 * pi / 360
 kp = 1              # FIXME: set an estimated proper kp value
 x = np.array([0])
@@ -59,7 +59,7 @@ class turtlebot_move():
         global face_orientation
 
         current_angle = 0
-        angular_speed = 10 * RAD             # pick a proper angular speed
+        angular_speed = 100 * RAD             # NOTE: the value will be different on different material
         vel = Twist()
         vel.linear.x = 0
         vel.linear.y = 0
@@ -67,7 +67,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = 0
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)              # NOTE: set to be 100 in real test
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
@@ -138,7 +138,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = 0
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)      # NOTE: set to be 100 in real test
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
@@ -151,8 +151,9 @@ class turtlebot_move():
             # there is no information collection for the sign of theta, so using atan2 here
             theta = atan2(next_point[0] - position[0], next_point[1] - position[1])
             vel.angular.z = kp * theta * 2 * pi/360
-            # vel.linear.x = -abs(theta) * 0.002 + 0.1    # FIXME
-            vel.linear.x = 0.12
+            # vel.linear.x = -abs(theta) * 0.002 + 0.1    # FIXME: untested in reality
+            # vel.linear.x = 0.12
+            vel.linear.x = 0.2                            # FIXME
             self.set_velocity.publish(vel)
             rate.sleep()
             if cnt % 3 == 0:
@@ -187,8 +188,8 @@ if __name__ == '__main__':
             ins.turnToPoint()
             ins.moveToPoint()
             ptr = ptr + 1
-        plt.scatter(x, y)
-        plt.title('Trajectory of the Given Test Case')
-        plt.show()
+        # plt.scatter(x, y)
+        # plt.title('Trajectory of the Given Test Case')
+        # plt.show()
     except rospy.ROSInterruptException or KeyboardInterrupt:
         rospy.loginfo("Action terminated.")
