@@ -84,7 +84,7 @@ class turtlebot_move():
         vel.angular.y = 0
         vel.angular.z = angular_speed
 
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(1)
         current_angle = 0
         print("current_angle = ", current_angle*180/PI)
         while not rospy.is_shutdown():
