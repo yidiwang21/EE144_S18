@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Twist
-from std_srvs.srv import Empty
+from std_msgs.msg import String, Empty
 from time import time
 import tf
 import numpy as np
