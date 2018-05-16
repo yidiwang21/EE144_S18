@@ -29,8 +29,8 @@ curr_point = waypoints[ptr]
 next_point = waypoints[ptr]
 face_orientation = 0.0
 
-EPSILON = 0.5
-dist_thresh = 0.5   # FIXME
+EPSILON = 0.1
+dist_thresh = 0.1   # FIXME
 RAD = 2 * pi / 360
 kp = 10              # FIXME: set an estimated proper kp value
 x = np.array([0])
@@ -153,7 +153,7 @@ class turtlebot_move():
             vel.angular.z = kp * theta * 2 * pi/360
             # vel.linear.x = -abs(theta) * 0.002 + 0.1    # FIXME
             # vel.linear.x = 0.12
-            vel.linear.x = 0.5
+            vel.linear.x = 0.2
             self.set_velocity.publish(vel)
             rate.sleep()
             if cnt % 3 == 0:
