@@ -71,8 +71,10 @@ class turtlebot_move():
     def turnRight(self):
         rospy.loginfo("Start turning right...")
 
-        angular_speed = 10*2*PI/360             # pick a proper angular speed
-        relative_angle = 90*2*PI/360            # set target turning angle to 90 degrees
+        angular_speed = 20*2*PI/360             # pick a proper angular speed
+        # relative_angle = 90*2*PI/360            # set target turning angle to 90 degrees
+        # relative_angle = 90*2*PI/360            # set target turning angle to 90 degrees
+
 
         vel = Twist()
         vel.linear.x = 0
