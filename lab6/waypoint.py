@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 #these waypoints are given as list for convience, however, you can use any data type that you like
 #These coordinates are in the "world" coordinate frame
 # waypoints = np.array([[0,0],[0.5,0],[1,0],[1,0],[1,0.5],[1,1],[1,1],[0.5,1],[0,1],[0,1],[0,0.5],[0,0]])
-waypoints = np.array([[0,0],[0.5,0],[0.5,0.5]])
+waypoints = np.array([[0,0],[0.5,0],[0.5,0.5],[0.5,1]])
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
@@ -187,8 +187,8 @@ if __name__ == '__main__':
             print('next_point', + next_point)
             ins.turnToPoint()
             ins.moveToPoint()
-        plt.scatter(x, y)
-        plt.title('Trajectory of the Given Test Case')
-        plt.show()
+        # plt.scatter(x, y)
+        # plt.title('Trajectory of the Given Test Case')
+        # plt.show()
     except rospy.ROSInterruptException or KeyboardInterrupt:
         rospy.loginfo("Action terminated.")
