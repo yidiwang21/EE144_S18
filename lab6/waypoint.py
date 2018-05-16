@@ -19,8 +19,8 @@ import matplotlib.pyplot as plt
 
 #these waypoints are given as list for convience, however, you can use any data type that you like
 #These coordinates are in the "world" coordinate frame
-waypoints = np.array([[0,0],[0.5,0],[1,0],[1,0],[1,0.5],[1,1],[1,1],[0.5,1],[0,1],[0,1],[0,0.5],[0,0]])
-# waypoints = np.array([[0,0],[0.5,0],[0.5,0.5],[1,0.5],[1.5,0.5],[1.5,0],[1,-1],[0.5,0],[0,0]])
+# waypoints = np.array([[0,0],[0.5,0],[1,0],[1,0],[1,0.5],[1,1],[1,1],[0.5,1],[0,1],[0,1],[0,0.5],[0,0]])
+waypoints = np.array([[0,0],[0.5,0],[0.5,0.5]])
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
@@ -67,7 +67,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = 0
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
@@ -138,7 +138,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = 0
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
