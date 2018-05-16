@@ -43,10 +43,10 @@ class turtlebot_move():
         vel.angular.y = 0
         vel.angular.z = 0
 
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)
         while not rospy.is_shutdown():
             t1 = rospy.Time.now().to_sec()
-            t = rospy.Time(t1 + 10)
+            t = rospy.Time(t1 + 4)
             cnt = 0
             print("Current time:", t1)
             while t1 < t.to_sec():
@@ -84,7 +84,7 @@ class turtlebot_move():
         vel.angular.y = 0
         vel.angular.z = angular_speed
 
-        rate = rospy.Rate(1)
+        rate = rospy.Rate(100)
         current_angle = 0
         print("current_angle = ", current_angle*180/PI)
         while not rospy.is_shutdown():
