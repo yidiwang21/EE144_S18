@@ -32,7 +32,7 @@ face_orientation = 0.0
 EPSILON = 0.5
 dist_thresh = 0.5   # FIXME
 RAD = 2 * pi / 360
-kp = 1              # FIXME: set an estimated proper kp value
+kp = 10              # FIXME: set an estimated proper kp value
 x = np.array([0])
 y = np.array([0])
 
@@ -59,7 +59,7 @@ class turtlebot_move():
         global face_orientation
 
         current_angle = 0
-        angular_speed = 10 * RAD             # pick a proper angular speed
+        angular_speed = 20 * RAD             # pick a proper angular speed
         vel = Twist()
         vel.linear.x = 0
         vel.linear.y = 0
@@ -152,7 +152,8 @@ class turtlebot_move():
             theta = atan2(next_point[0] - position[0], next_point[1] - position[1])
             vel.angular.z = kp * theta * 2 * pi/360
             # vel.linear.x = -abs(theta) * 0.002 + 0.1    # FIXME
-            vel.linear.x = 0.12
+            # vel.linear.x = 0.12
+            vel.linear.x = 0.5
             self.set_velocity.publish(vel)
             rate.sleep()
             if cnt % 3 == 0:
@@ -181,12 +182,12 @@ if __name__ == '__main__':
         while ptr < points_num - 1:
             curr_point = waypoints[ptr]
             next_point = waypoints[ptr + 1]
-            ptr = ptr + 1
             print ('==============================================')
             print('curr_point', + curr_point)
             print('next_point', + next_point)
             ins.turnToPoint()
             ins.moveToPoint()
+            ptr = ptr + 1
         # plt.scatter(x, y)
         # plt.title('Trajectory of the Given Test Case')
         # plt.show()
