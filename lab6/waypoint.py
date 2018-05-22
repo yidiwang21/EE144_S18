@@ -29,8 +29,8 @@ curr_point = waypoints[ptr]
 next_point = waypoints[ptr]
 face_orientation = 0.0
 
-EPSILON = 0.05
-dist_thresh = 0.05   # FIXME
+EPSILON = 0.1
+dist_thresh = 0.1   # FIXME
 RAD = 2 * pi / 360
 kp = 1              # FIXME: set an estimated proper kp value
 x = np.array([0])
