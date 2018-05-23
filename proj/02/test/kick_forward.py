@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue May 8, 20:47 2018
-Description: This script support any valid customized waypoints set, not only for the test case
+Description: This script is for demo at point 2. The robot must be facing x axis initially for real test
 
 @author: Yidi Wang
 """
@@ -19,8 +19,9 @@ import matplotlib.pyplot as plt
 
 #these waypoints are given as list for convience, however, you can use any data type that you like
 #These coordinates are in the "world" coordinate frame
-waypoints = np.array([[0,0],[0.5,0],[1,0],[1,0],[1,0.5],[1,1],[1,1],[0.5,1],[0,1],[0,1],[0,0.5],[0,0]])
-# waypoints = np.array([[0,0],[0.5,0],[0.5,0.5],[0.5,1]])
+''' waypoint of a half circle '''
+# waypoints = np.array([[0,0], [0.012,0.156], [0.049,0.309], [0.109,0.454], [0.191,0.588], [0.293,0.707], [0.412,0.809], [0.546,0.891], [0.691,0.951], [0.844, 0.988], [1,1]])
+waypoints = np.array([[0,0], [0,-0.5], [0,-1]])
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
@@ -29,10 +30,11 @@ curr_point = waypoints[ptr]
 next_point = waypoints[ptr]
 face_orientation = 0.0
 
-EPSILON = 0.1
-dist_thresh = 0.1   # FIXME
+EPSILON = 0.2   # FIXME
+dist_thresh = 0.15   # FIXME
 RAD = 2 * pi / 360
 kp = 1              # FIXME: set an estimated proper kp value
+v_ang = 10          # FIXME
 x = np.array([0])
 y = np.array([0])
 
@@ -59,7 +61,7 @@ class turtlebot_move():
         global face_orientation
 
         current_angle = 0
-        angular_speed = 10 * RAD             # pick a proper angular speed
+        angular_speed = v_ang * RAD             # NOTE: the value will be different on different material
         vel = Twist()
         vel.linear.x = 0
         vel.linear.y = 0
@@ -67,7 +69,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = 0
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)              # NOTE: set to be 100 in real test
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
@@ -118,9 +120,6 @@ class turtlebot_move():
                 rate.sleep()
                 t1 = rospy.Time.now().to_sec()
                 current_angle = angular_speed*(t1 - t0)
-                # if cnt % 30 == 0:
-                    # print('current_angle', + current_angle)
-                # cnt = cnt + 1
             break
 
         self.updateFacingAng()
@@ -140,7 +139,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = 0
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)      # NOTE: set to be 100 in real test
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
@@ -153,8 +152,9 @@ class turtlebot_move():
             # there is no information collection for the sign of theta, so using atan2 here
             theta = atan2(next_point[0] - position[0], next_point[1] - position[1])
             vel.angular.z = kp * theta * 2 * pi/360
-            # vel.linear.x = -abs(theta) * 0.002 + 0.1    # FIXME
-            vel.linear.x = 0.12
+            # vel.linear.x = -abs(theta) * 0.002 + 0.1    # FIXME: untested in reality
+            # vel.linear.x = 0.12
+            vel.linear.x = 0.2                            # FIXME
             self.set_velocity.publish(vel)
             rate.sleep()
             if cnt % 3 == 0:
@@ -196,8 +196,8 @@ if __name__ == '__main__':
             ins.main()
             ptr = ptr + 1
             print ('==============================================')
-        plt.scatter(x, y)
-        plt.title('Trajectory of the Given Test Case')
-        plt.show()
+        # plt.scatter(x, y)
+        # plt.title('Trajectory of the Given Test Case')
+        # plt.show()
     except rospy.ROSInterruptException or KeyboardInterrupt:
         rospy.loginfo("Action terminated.")

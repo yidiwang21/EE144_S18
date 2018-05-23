@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue May 8, 20:47 2018
-Description: This script is a real-test version of lab6
+Description: This script is the naive approach for demo at point 2.
+            The robot must be facing x axis initially.
+
 
 @author: Yidi Wang
 """
@@ -19,8 +21,10 @@ import matplotlib.pyplot as plt
 
 #these waypoints are given as list for convience, however, you can use any data type that you like
 #These coordinates are in the "world" coordinate frame
-waypoints = np.array([[0,0],[0.5,0],[1,0],[1,0],[1,0.5],[1,1],[1,1],[0.5,1],[0,1],[0,1],[0,0.5],[0,0]])
-# waypoints = np.array([[0,0],[0.5,0],[0.5,0.5],[0.5,1]])
+''' waypoint of a half circle '''
+# waypoints = np.array([[0,0], [0.012,0.156], [0.049,0.309], [0.109,0.454], [0.191,0.588], [0.293,0.707], [0.412,0.809], [0.546,0.891], [0.691,0.951], [0.844, 0.988], [1,1]])
+# waypoints = np.array([[0,0], [0.3,0.3], [0.5,0.5], [0.8,0.8], [1,1], [1,0.5], [1,0]])
+waypoints = np.array([[0,0], [1,1], [1,0.5], [1,0]])
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
@@ -29,10 +33,11 @@ curr_point = waypoints[ptr]
 next_point = waypoints[ptr]
 face_orientation = 0.0
 
-EPSILON = 0.1       # FIXME
-dist_thresh = 0.1   # FIXME
+EPSILON = 0.2   # FIXME
+dist_thresh = 0.15   # FIXME
 RAD = 2 * pi / 360
 kp = 1              # FIXME: set an estimated proper kp value
+v_ang = 80
 x = np.array([0])
 y = np.array([0])
 
@@ -59,7 +64,7 @@ class turtlebot_move():
         global face_orientation
 
         current_angle = 0
-        angular_speed = 80 * RAD             # NOTE: the value will be different on different material
+        angular_speed = v_ang * RAD             # NOTE: the value will be different on different material
         vel = Twist()
         vel.linear.x = 0
         vel.linear.y = 0
@@ -122,6 +127,8 @@ class turtlebot_move():
                     # print('current_angle', + current_angle)
                 # cnt = cnt + 1
             break
+
+        self.updateFacingAng()
         rospy.sleep(1)
 
     def moveToPoint(self):
@@ -161,52 +168,15 @@ class turtlebot_move():
                 y = np.append(y, position[1])
             cnt = cnt + 1
 
+        self.updateFacingAng()
+        rospy.sleep(1)
+
+    def updateFacingAng(arg):
+        global face_orientation
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
         face_orientation = orientation[2]
         print ('face_orientation = ', face_orientation)
-        print ('==============================================')
-        rospy.sleep(1)
-
-    def Circle(self):
-        print ("Start moving circularly...")
-        global x, y
-        global ptr
-        global next_point
-        global face_orientation
-        # initialize velocities to 0
-        vel = Twist()
-        vel.linear.x = 0.5
-        vel.linear.y = 0
-        vel.linear.z = 0
-        vel.angular.x = 0
-        vel.angular.y = 0
-        vel.angular.z = 100
-        rate = rospy.Rate(100)      # NOTE: set to be 100 in real test
-
-        while not rospy.is_shutdown():
-            t1 = rospy.Time.now().to_sec()
-            t = rospy.Time(t1 + 10)
-            cnt = 0
-            print("Current time:", t1)
-            while t1 < t.to_sec():
-                (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
-                orientation = tf.transformations.euler_from_quaternion(quaternion)
-                # rospy.loginfo("position: " + str(position))
-                # rospy.loginfo("orientation: " + str(orientation))
-                cnt = cnt + 1
-                self.set_velocity.publish(vel)
-                rate.sleep()
-                t1 = rospy.Time.now().to_sec()
-                if cnt % 10 == 0:
-                    print("Current time:", t1)  # print current time every 10 loops
-                cnt = cnt + 1
-            break
-        rospy.sleep(1)
-
-
-
-
 
     def shutdown(self):
         rospy.loginfo("Stop Action")
@@ -215,11 +185,6 @@ class turtlebot_move():
         stop_vel.angular.z = 0
         self.set_velocity.publish(stop_vel)
         rospy.sleep(1)
-
-    def main(self):
-        #self.turnToPoint()
-        #self.moveToPoint()
-        self.Circle()
 
 if __name__ == '__main__':
     try:
@@ -230,8 +195,10 @@ if __name__ == '__main__':
             print ('==============================================')
             print('curr_point', + curr_point)
             print('next_point', + next_point)
-            ins.main()
+            ins.turnToPoint()
+            ins.moveToPoint()
             ptr = ptr + 1
+            print ('==============================================')
         # plt.scatter(x, y)
         # plt.title('Trajectory of the Given Test Case')
         # plt.show()
