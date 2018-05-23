@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 #these waypoints are given as list for convience, however, you can use any data type that you like
 #These coordinates are in the "world" coordinate frame
-waypoints = np.array([[0,0],[0.5,0],[1,0],[1,0],[1,0.5],[1,1],[1,1],[0.5,1],[0,1],[0,1],[0,0.5],[0,0]])
+waypoints = np.array([[0,0], [0.3,0.3], [0.5,0.5], [0.8,0.8], [1,1], [1,0.5], [1,0]])
 # waypoints = np.array([[0,0],[0.5,0],[0.5,0.5],[0.5,1]])
 curr_point = np.array([0])
 next_point = np.array([0])
@@ -29,7 +29,7 @@ curr_point = waypoints[ptr]
 next_point = waypoints[ptr]
 face_orientation = 0.0
 
-EPSILON = 0.1
+EPSILON = 0.2
 dist_thresh = 0.1   # FIXME
 RAD = 2 * pi / 360
 kp = 1              # FIXME: set an estimated proper kp value
