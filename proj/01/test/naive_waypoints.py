@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 ''' waypoint of a half circle '''
 # waypoints = np.array([[0,0], [0.012,0.156], [0.049,0.309], [0.109,0.454], [0.191,0.588], [0.293,0.707], [0.412,0.809], [0.546,0.891], [0.691,0.951], [0.844, 0.988], [1,1]])
 # waypoints = np.array([[0,0], [0.3,0.3], [0.5,0.5], [0.8,0.8], [1,1], [1,0.5], [1,0]])
-waypoints = np.array([[0,0], [1,1], [1,0.5], [1,0]])
+waypoints = np.array([[0,0], [1,1], [1,0.5], [1,0],[0.5,0], [0,0]])
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
