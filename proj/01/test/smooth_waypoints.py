@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 #these waypoints are given as list for convience, however, you can use any data type that you like
 #These coordinates are in the "world" coordinate frame
 # waypoints = np.array([[0,0], [0.012,0.156], [0.049,0.309], [0.109,0.454], [0.191,0.588], [0.293,0.707], [0.412,0.809], [0.546,0.891], [0.691,0.951], [0.844, 0.988], [1,1]])
-waypoints = np.array([[0,0], [0,0.2], [1,1.2], [1,0.5], [1,0]])
+waypoints = np.array([[0,0], [0,0.3], [1,1.3], [1,0.8], [1,0.4], [1,0]])
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
@@ -96,7 +96,6 @@ class turtlebot_move():
                 target_angle = pi + target_angle
         print('target_angle = ', target_angle)
         relative_angle = target_angle - curr_orientation + face_orientation
-        print('init relative_angle = ', relative_angle)
         if relative_angle < 0:
             relative_angle = - relative_angle
             vel.angular.z = - angular_speed
@@ -123,9 +122,6 @@ class turtlebot_move():
                 rate.sleep()
                 t1 = rospy.Time.now().to_sec()
                 current_angle = angular_speed*(t1 - t0)
-                # if cnt % 30 == 0:
-                    # print('current_angle', + current_angle)
-                # cnt = cnt + 1
             break
 
         self.updateFacingAng()
