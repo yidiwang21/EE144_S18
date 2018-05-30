@@ -21,7 +21,8 @@ import matplotlib.pyplot as plt
 #these waypoints are given as list for convience, however, you can use any data type that you like
 #These coordinates are in the "world" coordinate frame
 # waypoints = np.array([[0,0], [0.012,0.156], [0.049,0.309], [0.109,0.454], [0.191,0.588], [0.293,0.707], [0.412,0.809], [0.546,0.891], [0.691,0.951], [0.844, 0.988], [1,1]])
-waypoints = np.array([[0,0], [0,0.3], [1,1.3], [1,0.8], [1,0.4], [1,0], [0.5,0], [0,0]])
+# waypoints = np.array([[0,0], [0,0.3], [1,1.3], [1,0.8], [1,0.4], [1,0], [0.5,0], [0,0]])
+waypoints = np.array([[0,0], [0,0.2], [1,1.2], [1.1,1.2], [1.1,-0.5], [1.1,0], [0,0]])    # FIXME
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
@@ -30,13 +31,13 @@ curr_point = waypoints[ptr]
 next_point = waypoints[ptr]
 face_orientation = 0.0
 
-EPSILON = 0.1   # FIXME
-dist_thresh = 0.15   # FIXME
+EPSILON = 0.1
+dist_thresh = 0.15
 RAD = 2 * pi / 360
-kp = 1              # FIXME: set an estimated proper kp value
+kp = 1
 v_ang = 80
-v_lin_smooth = 0.1  # FIXME
-v_ang_smooth = -0.1 # FIXME
+v_lin_smooth = 0.1
+v_ang_smooth = -0.1
 x = np.array([0])
 y = np.array([0])
 
@@ -63,7 +64,7 @@ class turtlebot_move():
         global face_orientation
 
         current_angle = 0
-        angular_speed = v_ang * RAD             # NOTE: the value will be different on different material
+        angular_speed = v_ang * RAD
         vel = Twist()
         vel.linear.x = 0
         vel.linear.y = 0
@@ -71,7 +72,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = 0
-        rate = rospy.Rate(100)              # NOTE: set to be 100 in real test
+        rate = rospy.Rate(100)
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
@@ -141,7 +142,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = 0
-        rate = rospy.Rate(100)      # NOTE: set to be 100 in real test
+        rate = rospy.Rate(100)
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)
@@ -154,9 +155,12 @@ class turtlebot_move():
             # there is no information collection for the sign of theta, so using atan2 here
             theta = atan2(next_point[0] - position[0], next_point[1] - position[1])
             vel.angular.z = kp * theta * 2 * pi/360
-            # vel.linear.x = -abs(theta) * 0.002 + 0.1    # FIXME: untested in reality
+            # vel.linear.x = -abs(theta) * 0.002 + 0.1
             # vel.linear.x = 0.12
-            vel.linear.x = 0.2                            # FIXME
+            if ptr == 3:
+                vel.linear.x = 0.5
+            else:
+                vel.linear.x = 0.2                            # FIXME
             self.set_velocity.publish(vel)
             rate.sleep()
             if cnt % 3 == 0:
@@ -181,7 +185,7 @@ class turtlebot_move():
         vel.angular.x = 0
         vel.angular.y = 0
         vel.angular.z = v_ang_smooth
-        rate = rospy.Rate(100)      # NOTE: set to be 100 in real test
+        rate = rospy.Rate(100)
 
         (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
         orientation = tf.transformations.euler_from_quaternion(quaternion)

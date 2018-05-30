@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue May 8, 20:47 2018
-Description: This script is for demo at point 2. The robot must be facing x axis initially for real test
+Description: This script is the advanced approach for demo at point 2 for simulation
+            The robot must be facing x axis initially
 
 @author: Yidi Wang
 """
@@ -19,10 +20,9 @@ import matplotlib.pyplot as plt
 
 #these waypoints are given as list for convience, however, you can use any data type that you like
 #These coordinates are in the "world" coordinate frame
-''' waypoint of a half circle '''
 # waypoints = np.array([[0,0], [0.012,0.156], [0.049,0.309], [0.109,0.454], [0.191,0.588], [0.293,0.707], [0.412,0.809], [0.546,0.891], [0.691,0.951], [0.844, 0.988], [1,1]])
-# waypoints = np.array([[0,0], [0,-0.5], [0,-1], [0,-0.5], [0,0]])
-waypoints = np.array([[0,0], [0,-1.5], [0,-1], [0,-0.5], [0,0]])    # FIXME
+# waypoints = np.array([[0,0], [0,0.2], [-0.7,0.5], [-0.7,0], [-0.7,-0.4], [-0.7,-0.7], [-0.3,-0.7], [0,-0.7], [0,-0.3], [0,0]])
+waypoints = np.array([[0,0], [0,0.2], [-0.7,0.5], [-0.7,-1.2], [-0.7,-0.6], [-0.7,0], [0,0]]) # FIXME: waypoints can be modified
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
@@ -31,11 +31,13 @@ curr_point = waypoints[ptr]
 next_point = waypoints[ptr]
 face_orientation = 0.0
 
-EPSILON = 0.2
+EPSILON = 0.1
 dist_thresh = 0.15
 RAD = 2 * pi / 360
 kp = 1
-v_ang = 90          # FIXME
+v_ang = 60
+v_lin_smooth = 0.1 # FIXME
+v_ang_smooth = 0.2 # FIXME
 x = np.array([0])
 y = np.array([0])
 
@@ -60,6 +62,12 @@ class turtlebot_move():
         global ptr
         global next_point
         global face_orientation
+        global v_ang
+
+        if ptr < 3: # FIXME
+            v_ang = 60
+        else:
+            v_ang = 80
 
         current_angle = 0
         angular_speed = v_ang * RAD
@@ -95,7 +103,7 @@ class turtlebot_move():
                 target_angle = pi + target_angle
         print('target_angle = ', target_angle)
         relative_angle = target_angle - curr_orientation + face_orientation
-        # print('init relative_angle = ', relative_angle)
+        print('init relative_angle = ', relative_angle)
         if relative_angle < 0:
             relative_angle = - relative_angle
             vel.angular.z = - angular_speed
@@ -107,6 +115,7 @@ class turtlebot_move():
             vel.angular.z = angular_speed
         else:
             vel.angular.z = angular_speed
+
         print('relative_angle = ', relative_angle)
         # if angular_speed < 0:
         #     print('truning clockwise')
@@ -155,7 +164,44 @@ class turtlebot_move():
             vel.angular.z = kp * theta * 2 * pi/360
             # vel.linear.x = -abs(theta) * 0.002 + 0.1
             # vel.linear.x = 0.12
-            vel.linear.x = 0.5                            # FIXME
+            if ptr == 2:
+                vel.linear.x = 0.5
+            else:
+                vel.linear.x = 0.2                            # FIXME
+            self.set_velocity.publish(vel)
+            rate.sleep()
+            if cnt % 3 == 0:
+                x = np.append(x, position[0])
+                y = np.append(y, position[1])
+            cnt = cnt + 1
+
+        self.updateFacingAng()
+        rospy.sleep(1)
+
+    def moveSmooth(self):
+        print ("Start moving smoothly...")
+        global x, y
+        global ptr
+        global next_point
+        global face_orientation
+        # initialize velocities to 0
+        vel = Twist()
+        vel.linear.x = v_lin_smooth
+        vel.linear.y = 0
+        vel.linear.z = 0
+        vel.angular.x = 0
+        vel.angular.y = 0
+        vel.angular.z = v_ang_smooth
+        rate = rospy.Rate(100)
+
+        (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
+        orientation = tf.transformations.euler_from_quaternion(quaternion)
+        cnt = 0
+        while sqrt((next_point[1] - position[1])**2 + (next_point[0] - position[0])**2) > dist_thresh:
+        # Find the position of the current goal waypoint in the robot’s coordinate frame, PR.
+        # Find the angle θ that PR forms with the current direction of motion of the robot
+            (position, quaternion) = tfListener.lookupTransform("/odom", "/base_footprint", rospy.Time(0))
+            orientation = tf.transformations.euler_from_quaternion(quaternion)
             self.set_velocity.publish(vel)
             rate.sleep()
             if cnt % 3 == 0:
@@ -181,10 +227,6 @@ class turtlebot_move():
         self.set_velocity.publish(stop_vel)
         rospy.sleep(1)
 
-    def main(self):
-        self.turnToPoint()
-        self.moveToPoint()
-
 if __name__ == '__main__':
     try:
         ins = turtlebot_move()
@@ -194,11 +236,18 @@ if __name__ == '__main__':
             print ('==============================================')
             print('curr_point', + curr_point)
             print('next_point', + next_point)
-            ins.main()
+            if ptr == 0:
+                ins.turnToPoint()
+                ins.moveToPoint()
+            elif ptr == 1:
+                ins.moveSmooth()
+            else:
+                ins.turnToPoint()
+                ins.moveToPoint()
             ptr = ptr + 1
             print ('==============================================')
-        # plt.scatter(x, y)
-        # plt.title('Trajectory of the Given Test Case')
-        # plt.show()
+        plt.scatter(x, y)
+        plt.title('Trajectory of the Given Test Case')
+        plt.show()
     except rospy.ROSInterruptException or KeyboardInterrupt:
         rospy.loginfo("Action terminated.")
