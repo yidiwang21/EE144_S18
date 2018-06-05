@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 #These coordinates are in the "world" coordinate frame
 ''' waypoint of a half circle '''
 # waypoints = np.array([[0,0], [0.012,0.156], [0.049,0.309], [0.109,0.454], [0.191,0.588], [0.293,0.707], [0.412,0.809], [0.546,0.891], [0.691,0.951], [0.844, 0.988], [1,1]])
-waypoints = np.array([[0,0], [0,-0.5], [0,-1], [0,-0.5], [0,0]])
+waypoints = np.array([[0,0], [0,-1.5], [0,-1], [0,-0.5], [0,0]])    # FIXME
 curr_point = np.array([0])
 next_point = np.array([0])
 ptr = 0
@@ -31,7 +31,7 @@ next_point = waypoints[ptr]
 face_orientation = 0.0
 
 EPSILON = 0.2   # FIXME
-dist_thresh = 0.15   # FIXME
+dist_thresh = 0.2   # FIXME
 RAD = 2 * pi / 360
 kp = 1              # FIXME: set an estimated proper kp value
 v_ang = 10          # FIXME
@@ -196,8 +196,8 @@ if __name__ == '__main__':
             ins.main()
             ptr = ptr + 1
             print ('==============================================')
-        # plt.scatter(x, y)
-        # plt.title('Trajectory of the Given Test Case')
-        # plt.show()
+        plt.scatter(x, y)
+        plt.title('Trajectory of the Given Test Case')
+        plt.show()
     except rospy.ROSInterruptException or KeyboardInterrupt:
         rospy.loginfo("Action terminated.")
